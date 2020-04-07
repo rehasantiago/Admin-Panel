@@ -35,18 +35,27 @@ mongoose
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
 
-const server = http.createServer(app);
-const io = socketIO(server);
+
+
+const api = require('./routes')
+app.use('/api', api)
+
+const server = http.Server(app);
+const io = socketIO.listen(server);
+io.set('origins', '*:*');
 io.on("connection", socket => {
+    console.log('hello')
+    console.log("New client connected" + socket.id);
     socket.on('initial_data', ()=>{
         User.find({}).then(users => {
             io.sockets.emit("get_data", users)
         })
     })
+
+    socket.on("disconnect", () => {
+        console.log("user disconnected");
+    });
 })
 
-
-const api = require('./routes')
-app.use('/api', api)
 
 app.listen(port, () => console.log(`Server up and running on port ${port} !`));
