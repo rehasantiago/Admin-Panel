@@ -20,16 +20,41 @@ router.post("/login", (req, res) => {
     //         admin: true
     //     })
     // }
-    User.findOne({ email }).then(user => {
+    User.findOneAndUpdate({ email }, {$set:{lastActive: Date.now()}}, {new: true}).then(user => {
       if (!user) {
         return res.status(404).json({ email: "Email not found" });
       }
-      bcrypt.compare(password, user.password).then(isMatch => {
-        if (isMatch) {
-          const payload = {
+    //   bcrypt.compare(password, user.password).then(isMatch => {
+    //     if (isMatch) {
+    //       const payload = {
+    //         id: user._id
+    //       };
+    //       jwt.sign(
+    //         payload,
+    //         keys.secretOrKey,
+    //         {
+    //           expiresIn: 31556926,
+    //           algorithm:'HS384'
+    //         },
+    //         (err, token) => {
+    //           res.json({
+    //             success: true,
+    //             token: "Bearer " + token
+    //           });
+    //         }
+    //       );
+    //     } else {
+    //       return res
+    //         .status(400)
+    //         .json({ password: "Password incorrect" });
+    //     }
+    //   });
+    console.log(user)
+    if(user.password===password){
+        const payload = {
             id: user._id
-          };
-          jwt.sign(
+        };
+        jwt.sign(
             payload,
             keys.secretOrKey,
             {
@@ -37,18 +62,23 @@ router.post("/login", (req, res) => {
               algorithm:'HS384'
             },
             (err, token) => {
-              res.json({
+              res.status(200).json({
                 success: true,
-                token: "Bearer " + token
+                token: "Bearer " + token,
+                user:{
+                    name:user.name,
+                    email: user.email,
+                    disableLogin: user.disableLogin
+                }
               });
             }
           );
-        } else {
-          return res
-            .status(400)
-            .json({ password: "Password incorrect" });
         }
-      });
+        else{
+            return res.status(400).json({
+                password: "Password incorrect"
+            })
+        }
     });
   });
 
