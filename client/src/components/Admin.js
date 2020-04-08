@@ -32,6 +32,7 @@ class Admin extends Component{
     onChange = async(e) => {
         const email = e.target.value
         const checked = e.target.checked
+        console.log(email, checked)
         await axios.post('http://127.0.0.1:8000/api/disable',{email, checked},
         axios.defaults.headers.common['authorization'] = this.props.cookies.get('AdminToken'),
         {
@@ -67,8 +68,8 @@ class Admin extends Component{
                                             <td>{user.email}</td>
                                             <td>{user.password}</td>
                                             <td>{d}</td>
-                                            <td><input type="checkbox" id="check" value={user.email} onChange={this.onChange} defaultChecked={user.disableLogin}/>
-                                            <label htmlFor="check">Yes</label>
+                                            <td><input type="checkbox" id={index} value={user.email} onChange={this.onChange} defaultChecked={user.disableLogin}/>
+                                            <label htmlFor={index}>Yes</label>
                                             </td>
                                         </tr>
                                     )

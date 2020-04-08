@@ -11,10 +11,10 @@ class Dashboard extends Component {
         if(!this.props.cookies.get('user')) return <Redirect to='/'/>
         const {name, email} = this.props.cookies.get('user')
         return (
-            <div>
-                Name: {name}
+            <div style={{fontFamily: 'Teko, sans-serif'}}>
+                <center><h4>Name: {name}</h4>
                 <br/>
-                Email: {email}
+                <h4>Email: {email}</h4></center>
             </div>
         )   
     }
