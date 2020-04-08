@@ -23,7 +23,7 @@ class Navbar extends Component{
         this.props.cookies.remove('AdminToken')
       }
     render(){
-      const links = !this.props.cookies.get('user') && !this.props.cookies.get('AdminToken')? <li><Link to='/login'>Login</Link></li> : <li><Link onClick={this.logout.bind(this)}>Logout</Link></li>
+      const links = !this.props.cookies.get('user') && !this.props.cookies.get('AdminToken')? <li><Link to='/'>Login</Link></li> : <li><Link onClick={this.logout.bind(this)}>Logout</Link></li>
         return (
           <nav className='fixed nav-wrapper navlink container-fluid sticky-top'>
             <div className='row' id='navbar'>

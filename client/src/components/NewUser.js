@@ -59,7 +59,7 @@ class NewUser extends Component {
     })
   };
   render() {
-    if(!this.props.cookies.get('AdminToken')) return <Redirect to='/login'/>
+    if(!this.props.cookies.get('AdminToken')) return <Redirect to='/'/>
     const { errors } = this.state;
     return (
       <div className="container">

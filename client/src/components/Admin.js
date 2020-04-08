@@ -40,7 +40,7 @@ class Admin extends Component{
     }
 
     render(){
-        if(!this.props.cookies.get('AdminToken')) return <Redirect to="/login"/>
+        if(!this.props.cookies.get('AdminToken')) return <Redirect to="/"/>
         const { users } = this.state
         if(!users) return <div>Loading...</div>
         return (
@@ -60,12 +60,13 @@ class Admin extends Component{
                             {
                                 users.map((user,index) => {
                                     const date = new Date(user.lastActive)
+                                    const d = !user.lastActive ? "User has not logged in yet" : <Moment format='MMMM Do YYYY, h:mm:ss a'>{date}</Moment>
                                     return(
                                         <tr key={index}>
                                             <td>{user.name}</td>
                                             <td>{user.email}</td>
                                             <td>{user.password}</td>
-                                            <td><Moment format='MMMM Do YYYY, h:mm:ss a'>{date}</Moment></td>
+                                            <td>{d}</td>
                                             <td><input type="checkbox" id="check" value={user.email} onChange={this.onChange} defaultChecked={user.disableLogin}/>
                                             <label htmlFor="check">Yes</label>
                                             </td>
