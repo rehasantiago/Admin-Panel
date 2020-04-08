@@ -8,7 +8,6 @@ class Dashboard extends Component {
         cookies: instanceOf(Cookies).isRequired
     };
     render(){
-        console.log(this.props.cookies.get('user'))
         if(!this.props.cookies.get('user')) return <Redirect to='/login'/>
         const {name, email} = this.props.cookies.get('user')
         return (

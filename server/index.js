@@ -57,16 +57,7 @@ app.use('/api', api)
 // })
 
 
-const server = app.listen(port, function() {
+app.listen(port, function() {
     console.log('running at localhost: ' + port);
 });
 
-const io = require('socket.io')(server);
-io.origins('*:*')
-io.on('connection', socket => {
-  console.log("New client connected" + socket.id);
-
-  socket.on('disconnect', function(){
-    console.log('User Disconnected');
-  });
-});

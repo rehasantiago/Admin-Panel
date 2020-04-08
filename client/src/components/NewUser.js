@@ -1,85 +1,82 @@
 import React, { Component } from "react";
-import { Link, Redirect } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
+import { Redirect, Link } from "react-router-dom";
 import { instanceOf } from 'prop-types';
 import { withCookies, Cookies } from 'react-cookie';
 
-class Login extends Component {
-
-  static propTypes = {
-    cookies: instanceOf(Cookies).isRequired
-  };
-
+class NewUser extends Component {
+    static propTypes = {
+        cookies: instanceOf(Cookies).isRequired
+      };
   constructor() {
     super();
     this.state = {
+      name: "",
       email: "",
       password: "",
-      errors: {}
+      errors: {},
+      status: ""
     };
   }
   onChange = e => {
     this.setState({ [e.target.id]: e.target.value });
   };
   onSubmit = e => {
+    this.setState({
+        status:""
+    })
     e.preventDefault();
-    const userData = {
+    const newUser = {
+      name: this.state.name,
       email: this.state.email,
       password: this.state.password
     };
-    axios.post('http://127.0.0.1:8000/api/login',userData,{
+    axios.post('http://127.0.0.1:8000/api/newUser',newUser,
+    axios.defaults.headers.common['authorization'] = this.props.cookies.get('AdminToken'),
+    {
       headers:{"Content-Type": "application/json"}
     })
-    .then(res => { 
+    .then(res => {
       if(res.data.success){
         this.setState({
+          name:"",
           email:"",
-          password:""
+          password:"",
+          errors: {},
         })
-        //use react cookies
-        if(res.data.admin){
-          
-          this.props.cookies.set('AdminToken',res.data.token, { path: '/', maxAge: "31556926" })
-          this.props.history.push('/admin')
-        }
-        if(!res.data.user.disableLogin){
-          this.props.cookies.set('user', res.data.user, { path: '/', maxAge: "31556926" })
-          this.props.history.push('/dashboard')
-        }
-        else{
-          this.setState({
-            errors:{
-              password: "Sorry! your login has been disabled"
-            }
-          })
-        }
-        
-      } 
+        this.setState({
+            status: "User added successfully"
+        })
+      }
     })
     .catch(err => {
-      if(err.response){
-        this.setState({
-          errors:err.response.data
-        }) 
-      }
-      
+        console.log(err)
+        if(err.response){
+            this.setState({
+                errors:err.response.data
+              })
+        }
     })
-    
   };
   render() {
-    if(this.props.cookies.get('user')) return <Redirect to="/dashboard"/>
+    if(!this.props.cookies.get('AdminToken')) return <Redirect to='/login'/>
     const { errors } = this.state;
     return (
       <div className="container">
-        <div style={{ marginTop: "4rem" }} className="row forms">
-          <div className="">
-            
-            <div className="col s12">
-              <h4>
-                <b>Login</b>
-              </h4>
-            </div>
+        <div className="row forms">
+          <div className="col s8">
             <form noValidate onSubmit={this.onSubmit}>
+              <div className="input-field col s12">
+                <input
+                  onChange={this.onChange}
+                  value={this.state.name}
+                  error={errors.name}
+                  id="name"
+                  type="text"
+                />
+                <label htmlFor="name">Name</label>
+                <span style={{color:"red"}}>{errors.name}</span>
+              </div>
               <div className="input-field col s12">
                 <input
                   onChange={this.onChange}
@@ -102,7 +99,8 @@ class Login extends Component {
                 <label htmlFor="password">Password</label>
                 <span style={{color:"red"}}>{errors.password}</span>
               </div>
-              <div className="col s12" style={{ paddingLeft: "11.250px" }}>
+             
+              <div className="col s12" style={{  }}>
                 <button
                   style={{
                     width: "150px",
@@ -114,10 +112,13 @@ class Login extends Component {
                   type="submit"
                   className="btn btn-large waves-effect waves-light hoverable blue accent-3"
                 >
-                  Login
+                  Add
                 </button>
+                <br/>
               </div>
             </form>
+            <span style={{color:"green"}}>{this.state.status}</span>
+            <Link to="/admin">Go back to admin page</Link>
           </div>
         </div>
       </div>
@@ -125,4 +126,4 @@ class Login extends Component {
   }
 }
 
-export default withCookies(Login)
+export default withCookies(NewUser)

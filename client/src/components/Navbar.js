@@ -19,11 +19,11 @@ class Navbar extends Component{
             });
       }
       logout(){
-        this.props.cookies.remove('taskToken')
         this.props.cookies.remove('user')
+        this.props.cookies.remove('AdminToken')
       }
     render(){
-      const links = !this.props.cookies.get('taskToken') ? <li><Link to='/login'>Login</Link></li> : <li><Link onClick={this.logout.bind(this)}>Logout</Link></li>
+      const links = !this.props.cookies.get('user') && !this.props.cookies.get('AdminToken')? <li><Link to='/login'>Login</Link></li> : <li><Link onClick={this.logout.bind(this)}>Logout</Link></li>
         return (
           <nav className='fixed nav-wrapper navlink container-fluid sticky-top'>
             <div className='row' id='navbar'>
@@ -32,15 +32,13 @@ class Navbar extends Component{
                         <a className="sidenav-trigger navlink" id='bars' data-target="Contact Us-as">
                             <i className="fa fa-bars fa-2x" aria-hidden="true"></i>
                         </a>
-                        <ul className="right hide-on-med-and-down">
+                        <ul className="right">
                             {links}
                         </ul>
                     </div>
                 </div>
             </div>
-            <ul className="sidenav" id="Contact Us-as">
-              {links}
-            </ul>
+
           </nav>
         )
       }

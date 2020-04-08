@@ -1,24 +1,86 @@
 import React, { Component } from "react";
-import socketIOClient from "socket.io-client";
+import axios from 'axios';
+import { Redirect, Link } from "react-router-dom";
+import { instanceOf } from 'prop-types';
+import { withCookies, Cookies } from 'react-cookie';
+import Moment from 'react-moment';
 
 class Admin extends Component{
+    
+    static propTypes = {
+        cookies: instanceOf(Cookies).isRequired
+      };
     constructor(){
         super()
-        const socket = socketIOClient("http://127.0.0.1:8000");
+        this.state = {
+            users: null
+        }
     }
-    // componentDidMount() {
-    //     socket.emit("initial_data");
-    //     socket.on("get_data", (users) =>{
-    //         console.log(users)
-    //     })
-    // }
+
+    componentWillMount(){
+        axios.get('http://127.0.0.1:8000/api/users',
+        axios.defaults.headers.common['authorization'] = this.props.cookies.get('AdminToken'),
+        {
+            headers:{"Content-Type": "application/json"}
+          }).then(res => {
+            this.setState({
+                users:res.data.users
+            })
+          })
+    }
+
+    onChange = async(e) => {
+        const email = e.target.value
+        const checked = e.target.checked
+        await axios.post('http://127.0.0.1:8000/api/disable',{email, checked},
+        axios.defaults.headers.common['authorization'] = this.props.cookies.get('AdminToken'),
+        {
+            headers:{"Content-Type": "application/json"}
+        })
+    }
+
     render(){
+        if(!this.props.cookies.get('AdminToken')) return <Redirect to="/login"/>
+        const { users } = this.state
+        if(!users) return <div>Loading...</div>
         return (
-            <div>
-                Good
+            <div className="container">
+                <div className='' style={{overflowX: 'auto'}}>
+                    <table className='table table-bordered'>
+                        <thead className='table-dark'>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Password</th>
+                                <th scope="col">Last Active</th>
+                                <th scope="col">Disable Login?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                users.map((user,index) => {
+                                    const date = new Date(user.lastActive)
+                                    return(
+                                        <tr key={index}>
+                                            <td>{user.name}</td>
+                                            <td>{user.email}</td>
+                                            <td>{user.password}</td>
+                                            <td><Moment format='MMMM Do YYYY, h:mm:ss a'>{date}</Moment></td>
+                                            <td><input type="checkbox" id="check" value={user.email} onChange={this.onChange} defaultChecked={user.disableLogin}/>
+                                            <label htmlFor="check">Yes</label>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                <br/>
+                <Link className="btn btn-outline-dark" to='/newUser'>New User</Link>
             </div>
         )
     }
 }
 
-export default Admin
+export default withCookies(Admin)

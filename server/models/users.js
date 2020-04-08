@@ -18,8 +18,7 @@ const UserSchema =  new Schema({
         required: true
     },
     lastActive:{
-        type: Date,
-        required: true
+        type: Date
     },
     disableLogin :{
         type: Boolean,
