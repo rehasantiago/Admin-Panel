@@ -1,5 +1,5 @@
 # Admin Panel <br/>
-The application has been created with MERN stack. It consists on an admin panel which shows the list of user along with a option to add a new user. The admin also has the ability to disable a user. There is a common login form for admin and the user.<br/>
+The application has been created with MERN stack. It consists of an admin panel which shows the list of user along with a option to add a new user. The admin also has the ability to disable a user. There is a common login form for admin and the user.<br/>
 
 ## 1.Schema for the database table <br>
 ![Schema](/images/schema.png)
