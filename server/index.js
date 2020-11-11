@@ -25,7 +25,7 @@ console.log(req.body);
 next();
 })
 
-const db = require('./config/key').mongoTaskURI
+const db = require('./config/key').mongoUserURI
 
 mongoose
   .connect(
@@ -35,27 +35,11 @@ mongoose
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
 
+const users = require('./routes/users')
+app.use('/users', users);
 
-
-const api = require('./routes')
-app.use('/api', api)
-
-// const server = http.Server(app);
-// const io = socketIO.listen(server);
-// io.set('origins', '*:*');
-// io.on("connection", socket => {
-//     console.log("New client connected" + socket.id);
-//     socket.on('initial_data', ()=>{
-//         User.find({}).then(users => {
-//             io.sockets.emit("get_data", users)
-//         })
-//     })
-
-//     socket.on("disconnect", () => {
-//         console.log("user disconnected");
-//     });
-// })
-
+const todos = require('./routes/todos')
+app.use('/todos', todos);
 
 app.listen(port, function() {
     console.log('running at localhost: ' + port);
