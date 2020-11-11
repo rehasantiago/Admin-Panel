@@ -12,3 +12,4 @@ The application has been created with MERN stack. It consists of an admin panel 
 5.`npm install`:- Install all the dependencies <br/>
 6.`npm start`:- Start the client <br/>
 
+# todo-app
